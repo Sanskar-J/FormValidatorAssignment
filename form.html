@@ -1,0 +1,155 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IFrame</title>
+  <script>
+    let formValidationRules
+    fetch('https://raw.githubusercontent.com/stefanbinder/countries-states/master/countries.json') // replace with your API endpoint
+      .then(response => response.json())
+      .then(data => {
+        mainData = data
+        var countryDropdown = document.getElementById('country')
+        const state = document.getElementById("state")
+        // loop through the countries data and add them as options to the dropdown
+        data.forEach(country => {
+          const option = document.createElement("option");
+          option.text = country.name;
+          option.value = country.name;
+          countryDropdown.add(option);
+        });
+        countryDropdown.addEventListener("change", function () {
+          state.disabled = false;
+          state.innerHTML = '<option value="">--Select State--</option>'
+          if (this.value) {
+            let states = data.filter(con => {
+              return con.name === this.value
+            })[0]
+
+            states = states.states
+
+            states.forEach(st => {
+              const option = document.createElement("option")
+              option.text = st.name;
+              option.value = st.name;
+              state.add(option)
+            })
+            if (states.length === 0) {
+              state.disabled = true;
+            }
+          }
+
+
+        })
+      })
+      .catch(error => console.error("Error:", error));
+
+
+  </script>
+
+</head>
+
+<body>
+  <div style="margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;">
+    <p class="maihoonekclass"></p>
+    <form id="form" style="display: flex; flex-direction: column;flex-wrap: wrap;">
+      <h3>Can you please provide your personal details?</h1>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="email">Email address:</label>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="contact">Contact number:</label>
+        <input type="tel" id="contact" name="contact"><br><br>
+
+        <label for="country">Country:</label>
+        <select id="country" name="country">
+          <option value="">--Select Country--</option>
+        </select><br><br>
+
+        <label for="state">State:</label>
+        <select id="state" name="state">
+          <option value="">--Select State--</option>
+        </select><br><br>
+
+        <input id="btn" type="submit" value="Submit">
+    </form>
+
+
+
+  </div>
+</body>
+<style>
+  * {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  form {
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: rgba(233, 236, 235, 0.998);
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  input {
+    padding-bottom: 10px;
+  }
+
+  input,
+  select {
+    margin-bottom: 20px;
+  }
+
+  #btn {
+    width: 50%;
+    height: 50px;
+    padding: 5px;
+    color: white;
+    background-color: rgb(7, 69, 79);
+    border-radius: 5px;
+    font-weight: bold;
+  }
+</style>
+<script>
+
+
+  form.addEventListener("submit", handlesubmit)
+  function handlesubmit(e) {
+    e.preventDefault()
+    const name = document.getElementById('name')
+    const email = document.getElementById('email')
+    const contact = document.getElementById('contact')
+    const country = document.getElementById('country')
+    const state = document.getElementById('state')
+    var stateVal = state.value
+    if (state.disabled)
+      stateVal = "No States"
+    const response = {
+      "name": name.value,
+      "email": email.value,
+      "contact": contact.value,
+      "country": country.value,
+      "state": stateVal
+    };
+    const prtwindow = window.parent;
+    prtwindow.postMessage({ action: 'success', data: response }, "*");
+
+  }
+
+</script>
+
+</html>

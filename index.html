@@ -1,0 +1,110 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment</title>
+
+</head>
+
+<body>
+    <div style=" margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    border-radius: 3px solid green;">
+        <iframe id="frame" src="form.html" width="350"  height="600" frameborder="1"></iframe>
+        <p id="message">Mai hoon ek message</p>
+    </div>
+</body>
+<script>
+    // Get a reference to the iframe element
+    const iframe = document.getElementById('frame');
+
+    // Define the form validation rules
+    const validators = {
+        name: {
+            validate: function (value) {
+                return value.length >= 4 && value.length <= 10;
+            },
+            message: 'Name must be between 4 and 10 characters.'
+        },
+        email: {
+            validate: function (value) {
+                const emailRegex = /\S+@\S+\.\S+/;
+                return emailRegex.test(value);
+            },
+            message: 'Email address must be valid.'
+        },
+        contact: {
+            validate: function (value) {
+                const phoneRegex = /^\d{10}$/;
+                return phoneRegex.test(value);
+            },
+            message: 'Contact number must be 10 digits.'
+        },
+        country: {
+            validate: function (value) {
+                return value !== '';
+            },
+            message: 'Please select a country.'
+        },
+        state: {
+            validate: function (value) {
+                return value !== '';
+            },
+            message: 'Please select a state.'
+        }
+    };
+    window.addEventListener('message', getData, false)
+    const frame=document.getElementById("frame")
+    function getData(e) {
+        e.preventDefault()
+        const p = document.getElementById("message")
+        if (e.data.action === "success") {
+            // console.log(e.data.data);
+            const data = e.data.data;
+            if (!validators.name.validate(data.name)) {
+                p.innerHTML = 'Result: {"Name":"' + validators.name.message + '"}';
+                frame.style.borderColor="red"
+                return
+            }
+            if (!validators.email.validate(data.email)) {
+                p.innerHTML = 'Result: {"Email":"' + validators.email.message + '"}';
+                frame.style.borderColor="red"
+                return
+            }
+            if (!validators.contact.validate(data.contact)) {
+                p.innerHTML = 'Result: {"Contact":"' + validators.contact.message + '"}'
+                frame.style.borderColor="red"
+                return
+            }
+            if (!validators.country.validate(data.country)) {
+                p.innerHTML = 'Result: {"Country":"' + validators.country.message + '"}'
+                frame.style.borderColor="red"
+                return
+            }
+            if (!validators.state.validate(data.state)) {
+                p.innerHTML = 'Result: {"State":"' + validators.state.message + '"}';
+                frame.style.borderColor="red"
+                return
+            } else {
+                p.innerHTML = 'Result: {"Success":"All fields are valid}"'
+                frame.style.borderColor="green"
+                return
+            }
+
+        }
+    }
+
+// document.getElementById("message").innerText("Result:{ " +msg+"}")
+
+
+
+</script>
+
+</html>
